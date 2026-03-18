@@ -132,7 +132,6 @@ const FrostedSurface = forwardRef<
             style={{
               position: "relative",
               zIndex: 1,
-              font: "500 20px/1 system-ui",
               textShadow: brightOverlay ? "0px 2px 12px rgba(0, 0, 0, 0)" : "0px 2px 12px rgba(0, 0, 0, 0.4)",
             }}
           >
