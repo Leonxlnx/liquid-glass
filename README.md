@@ -1,73 +1,103 @@
-# React + TypeScript + Vite
+# Liquid Glass Effect
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A realistic frosted glass UI component for React with chromatic aberration, edge refraction, and spring physics.
 
-Currently, two official plugins are available:
+![Demo](https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=60)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Frosted Glass** — Backdrop blur + saturation via CSS `backdrop-filter`
+- **Edge Refraction** — SVG displacement maps for realistic light bending at edges
+- **Chromatic Aberration** — Color channel splitting for lens-like distortion
+- **Spring Physics** — Elastic deformation and follow-cursor movement
+- **Shimmer Border** — Dynamic gradient borders that respond to mouse position
+- **Cross-Browser** — Graceful fallback for Safari/Firefox (CSS shimmer overlay)
+- **Hover & Press States** — Built-in interactive highlights for clickable elements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Quick Start
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/Leonxlnx/liquid-glass-demo.git
+cd liquid-glass-demo
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```tsx
+import GlassLayer from './glass-effect'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+// Basic glass card
+<GlassLayer
+  displacementScale={50}
+  blurAmount={0.05}
+  saturation={115}
+  aberrationIntensity={1}
+  cornerRadius={20}
+  padding="40px 56px"
+  style={{ position: 'fixed', top: '50%', left: '50%' }}
+>
+  <h1>Hello Glass</h1>
+</GlassLayer>
+
+// Clickable glass button
+<GlassLayer
+  displacementScale={0}
+  blurAmount={0.06}
+  cornerRadius={999}
+  padding="22px"
+  onClick={() => console.log('clicked')}
+>
+  <span>Click me</span>
+</GlassLayer>
 ```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `displacementScale` | `number` | `70` | SVG displacement intensity (0 = no refraction) |
+| `blurAmount` | `number` | `0.0625` | Backdrop blur multiplier (×32px) |
+| `saturation` | `number` | `140` | Backdrop color saturation (%) |
+| `aberrationIntensity` | `number` | `2` | Chromatic aberration strength |
+| `elasticity` | `number` | `0.15` | Spring physics stiffness |
+| `cornerRadius` | `number` | `999` | Border radius in px (999 = pill/circle) |
+| `padding` | `string` | `"24px 32px"` | Inner padding |
+| `overLight` | `boolean` | `false` | Dims backdrop for bright backgrounds |
+| `onClick` | `() => void` | — | Makes element clickable with hover/press states |
+| `style` | `CSSProperties` | `{}` | Position the element (use `position: fixed` + `top/left`) |
+| `mode` | `DisplacementMode` | `"standard"` | `"standard"` or `"shader"` displacement mode |
+
+## File Structure
+
+```
+src/glass-effect/
+├── index.tsx             # Main GlassLayer component (physics, shimmer borders)
+├── glass-surface.tsx     # FrostedSurface (backdrop-filter + SVG filter)
+├── svg-filter.tsx        # SVG displacement & aberration filter
+├── shader-engine.ts      # Procedural displacement map generator
+├── displacement-maps.ts  # Pre-built SVG displacement maps
+├── interaction-physics.ts # Spring physics & elastic deformation
+├── browser-detect.ts     # Chromium/Safari/Firefox detection
+├── shimmer-overlay.tsx   # CSS fallback for non-Chromium browsers
+└── types.ts              # TypeScript interfaces
+```
+
+## Tips
+
+- Use `displacementScale={0}` for small/circular elements to avoid SVG filter artifacts
+- Use `position: 'fixed'` with `top/left` in the `style` prop for positioning
+- Pass a `mouseContainer` ref to track mouse across a larger area
+- Set `cornerRadius={999}` for circular glass buttons
+
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite
+- SVG Filters (`feDisplacementMap`, `feComponentTransfer`)
+- CSS `backdrop-filter`
+
+## License
+
+MIT
