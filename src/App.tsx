@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import LiquidGlass from './liquid-glass/index'
+import GlassLayer from './glass-effect'
 
 const backgrounds = [
   'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1920&q=80',
@@ -28,7 +28,7 @@ function App() {
       ))}
 
       {/* Single fixed glass card in center */}
-      <LiquidGlass
+      <GlassLayer
         mouseContainer={containerRef}
         displacementScale={50}
         blurAmount={0.05}
@@ -58,7 +58,7 @@ function App() {
             Scroll through the backgrounds
           </p>
         </div>
-      </LiquidGlass>
+      </GlassLayer>
     </div>
   )
 }
