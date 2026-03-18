@@ -2,7 +2,7 @@
 
 A realistic frosted glass UI component for React with chromatic aberration, edge refraction, and spring physics.
 
-![Demo](https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=60)
+![Liquid Glass Demo](assets/preview.png)
 
 ## Features
 
