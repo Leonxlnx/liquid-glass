@@ -1,5 +1,7 @@
 import { type CSSProperties, forwardRef, useEffect, useId, useState } from "react"
 import { RefractionFilter, buildComputedDisplacement } from "./svg-filter"
+import { supportsBackdropSvgFilter } from "./browser-detect"
+import ShimmerOverlay from "./shimmer-overlay"
 import type { DisplacementMode } from "./types"
 
 /* ---------- Frosted glass surface ---------- */
@@ -46,13 +48,14 @@ const FrostedSurface = forwardRef<
       dimensions = { width: 270, height: 69 },
       onClick,
       variant = "standard",
+      mouseOffset,
     },
     ref,
   ) => {
     const filterTag = useId()
     const [computedUri, setComputedUri] = useState<string>("")
 
-    const isGecko = navigator.userAgent.toLowerCase().includes("firefox")
+    const canUseSvgBackdrop = supportsBackdropSvgFilter()
 
     // Build shader-based map on demand
     useEffect(() => {
@@ -63,12 +66,15 @@ const FrostedSurface = forwardRef<
     }, [variant, dimensions.width, dimensions.height])
 
     const backdropCSS = {
-      filter: isGecko ? null : `url(#${filterTag})`,
+      // Apply SVG displacement filter only on Chromium (Safari/Firefox can't do backdrop-filter + SVG)
+      filter: canUseSvgBackdrop ? `url(#${filterTag})` : undefined,
       backdropFilter: `blur(${(brightOverlay ? 12 : 0) + blurStrength * 32}px) saturate(${colorBoost}%)`,
+      WebkitBackdropFilter: `blur(${(brightOverlay ? 12 : 0) + blurStrength * 32}px) saturate(${colorBoost}%)`,
     }
 
     return (
       <div ref={ref} className={`relative ${className} ${pressed ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`} style={style} onClick={onClick}>
+        {/* SVG filter definition — always rendered, used by Chromium */}
         <RefractionFilter
           variant={variant}
           id={filterTag}
@@ -108,6 +114,17 @@ const FrostedSurface = forwardRef<
               } as CSSProperties
             }
           />
+
+          {/* CSS shimmer fallback for non-Chromium browsers */}
+          {!canUseSvgBackdrop && (
+            <ShimmerOverlay
+              width={dimensions.width}
+              height={dimensions.height}
+              mouseOffset={mouseOffset}
+              aberration={aberration}
+              radius={radius}
+            />
+          )}
 
           {/* Crisp content layer */}
           <div
